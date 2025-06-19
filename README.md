@@ -5,7 +5,7 @@
 
 <div id="user-content-toc">
   <ul align="left">
-    <summary><h1 style="display: inline-block">· DEVMINDS · </h1></summary>
+    <summary><h1 style="display: inline-block">· SEMOCADEV · </h1></summary>
   </ul>
 </div>
 
@@ -74,20 +74,20 @@
 <table align="left">
 <tr border="none">
 <td width="50%" align="center">
-  <img align="left" src="https://github-readme-stats.vercel.app/api?username=Semoca001&theme=dark&show_icons=true&count_private=true&bg_color=000000&title_color=ffffff&text_color=ffffff&icon_color=ffffff&border_color=444444" />
+  <img align="left" src="https://github-readme-stats.vercel.app/api?username=SemocaDev&theme=dark&show_icons=true&count_private=true&bg_color=000000&title_color=ffffff&text_color=ffffff&icon_color=ffffff&border_color=444444" />
   <br><br>
-  <img title="· SYSTEM STATUS ·" alt="GitHub streak stats" src="https://github-readme-streak-stats.herokuapp.com/?user=Semoca001&theme=dark&background=000000&ring=ffffff&fire=ffffff&currStreakLabel=ffffff&currStreakNum=ffffff&sideNums=ffffff&sideLabels=ffffff&border=444444" /> 
+  <img title="· SYSTEM STATUS ·" alt="GitHub streak stats" src="https://github-readme-streak-stats.herokuapp.com/?user=SemocaDev&theme=dark&background=000000&ring=ffffff&fire=ffffff&currStreakLabel=ffffff&currStreakNum=ffffff&sideNums=ffffff&sideLabels=ffffff&border=444444" /> 
 </td>
 
 <td width="50%" align="center">
-  <img align="center" src="https://github-readme-stats.anuraghazra1.vercel.app/api/top-langs/?username=Semoca001&theme=dark&hide_border=false&no-bg=true&no-frame=true&langs_count=10&bg_color=000000&title_color=ffffff&text_color=ffffff&border_color=444444"/>
+  <img align="center" src="https://github-readme-stats.anuraghazra1.vercel.app/api/top-langs/?username=SemocaDev&theme=dark&hide_border=false&no-bg=true&no-frame=true&langs_count=10&bg_color=000000&title_color=ffffff&text_color=ffffff&border_color=444444"/>
 </td>
 </tr>
 </table>
 
 <div align="left">
   <a href="https://github.com/ryo-ma/github-profile-trophy">
-      <img align="center" width="84%" src="https://github-profile-trophy.vercel.app/?username=Semoca001&theme=darkhub&row=1&column=7&margin-h=15&margin-w=5&no-bg=true" alt="TROPHIES" />
+      <img align="center" width="84%" src="https://github-profile-trophy.vercel.app/?username=SemocaDev&theme=darkhub&row=1&column=7&margin-h=15&margin-w=5&no-bg=true" alt="TROPHIES" />
   </a>
 </div>
 
