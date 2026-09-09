@@ -1,0 +1,259 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/SemocaDev/SemocaDev/blob/main/victoria\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Capítulo 5: Modelo de Transporte y sus Variantes\n",
+        "## 1. Definición y Concepto (Basado en Taha, 9na Edición, Pág. 175)\n",
+        "\n",
+        "**Definición:**\n",
+        "El modelo de transporte es una clase especial de programación lineal que tiene que ver con transportar un artículo desde sus fuentes (es decir, fábricas) hasta sus destinos (es decir, bodegas).\n",
+        "\n",
+        "**Objetivo:**\n",
+        "El objetivo del modelo es **minimizar el costo de transporte total** al mismo tiempo que se satisfacen las restricciones de la oferta y la demanda.\n",
+        "\n",
+        "**Estructura de Red:**\n",
+        "El problema se puede representar como una red donde:\n",
+        "* Hay $m$ orígenes y $n$ destinos, cada uno representado por un nodo.\n",
+        "* Los arcos representan las rutas que unen los orígenes con los destinos.\n",
+        "* Cada arco $(i, j)$ que une el origen $i$ con el destino $j$ transporta dos piezas de información: el costo de transporte por unidad $c_{ij}$ y la cantidad transportada $x_{ij}$.\n",
+        "* La cantidad de la oferta en el origen $i$ es $a_i$ y la cantidad de la demanda en el destino $j$ es $b_j$.\n",
+        "\n",
+        "## 2. Ejemplo 5.1-1: MG Auto (Taha, Pág. 175)\n",
+        "\n",
+        "MG Auto cuenta con tres plantas en Los Ángeles, Detroit y Nueva Orleáns, y dos importantes centros de distribución en Denver y Miami. Las capacidades trimestrales de las tres plantas son 1000, 1500 y 1200 automóviles, y las demandas de los dos centros de distribución durante el mismo periodo son de 2300 y 1400 automóviles.\n",
+        "\n",
+        "La compañía transportista cobra 8 centavos por milla por automóvil, lo que se traduce en los siguientes **costos de transporte por automóvil ($)**:\n",
+        "\n",
+        "| Origen \\ Destino | Denver (1) | Miami (2) | Oferta ($a_i$) |\n",
+        "|:---|:---:|:---:|:---:|\n",
+        "| **Los Ángeles (1)** | \\$80 | \\$215 |1000 |\n",
+        "| **Detroit (2)** | \\$100 | \\$108 | 1500 |\n",
+        "| **Nueva Orleáns (3)** | \\$102 | \\$68 | 1200 |\n",
+        "| **Demanda ($b_j$)** | **2300** | **1400** | **Total: 3700** |\n",
+        "\n",
+        "**Modelo de Programación Lineal Asociado:**\n",
+        "*   **Minimizar** $Z = 80x_{11} + 215x_{12} + 100x_{21} + 108x_{22} + 102x_{31} + 68x_{32}$\n",
+        "*   **Sujeto a (Oferta):**\n",
+        "    *   $x_{11} + x_{12} = 1000$\n",
+        "    *   $x_{21} + x_{22} = 1500$\n",
+        "    *   $x_{31} + x_{32} = 1200$\n",
+        "*   **Sujeto a (Demanda):**\n",
+        "    *   $x_{11} + x_{21} + x_{31} = 2300$\n",
+        "    *   $x_{12} + x_{22} + x_{32} = 1400$\n",
+        "*   $x_{ij} \\ge 0$"
+      ],
+      "metadata": {
+        "id": "D9rhlPW2QSkU"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "VDooLhU9QRbf",
+        "outputId": "ff9c37d6-67a7-4870-f13b-cc42f4a58d8f"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: pulp in /usr/local/lib/python3.13/dist-packages (3.3.2)\n"
+          ]
+        }
+      ],
+      "source": [
+        "# 1. Instalación de la librería PuLP para Programación Lineal\n",
+        "!pip install pulp"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import pulp\n",
+        "\n",
+        "# 2. Inicialización del modelo de minimización\n",
+        "modelo = pulp.LpProblem(\"Modelo_Transporte_MG_Auto\", pulp.LpMinimize)\n",
+        "\n",
+        "# 3. Definición de Nodos\n",
+        "origenes = [\"Los_Angeles\", \"Detroit\", \"Nueva_Orleans\"]\n",
+        "destinos = [\"Denver\", \"Miami\"]\n",
+        "\n",
+        "# 4. Parámetros de Oferta y Demanda\n",
+        "oferta = {\n",
+        "    \"Los_Angeles\": 1000,\n",
+        "    \"Detroit\": 1500,\n",
+        "    \"Nueva_Orleans\": 1200\n",
+        "}\n",
+        "\n",
+        "demanda = {\n",
+        "    \"Denver\": 2300,\n",
+        "    \"Miami\": 1400\n",
+        "}\n",
+        "\n",
+        "# 5. Matriz de Costos de Transporte (c_ij)\n",
+        "costos = {\n",
+        "    \"Los_Angeles\": {\"Denver\": 80, \"Miami\": 215},\n",
+        "    \"Detroit\":     {\"Denver\": 100, \"Miami\": 108},\n",
+        "    \"Nueva_Orleans\": {\"Denver\": 102, \"Miami\": 68}\n",
+        "}\n",
+        "\n",
+        "# 6. Creación de Variables de Decisión (x_ij >= 0)\n",
+        "# Creamos un diccionario de variables para cada combinación (Origen, Destino)\n",
+        "rutas = [(i, j) for i in origenes for j in destinos]\n",
+        "x = pulp.LpVariable.dicts(\"Envio\", (origenes, destinos), lowBound=0, cat='Continuous')\n",
+        "\n",
+        "# 7. Función Objetivo\n",
+        "modelo += pulp.lpSum([costos[i][j] * x[i][j] for (i, j) in rutas]), \"Costo_Total_Transporte\"\n",
+        "\n",
+        "# 8. Restricciones de Oferta (Ecuaciones porque está balanceado 3700 = 3700)\n",
+        "for i in origenes:\n",
+        "    modelo += pulp.lpSum([x[i][j] for j in destinos]) == oferta[i], f\"Oferta_{i}\"\n",
+        "\n",
+        "# 9. Restricciones de Demanda\n",
+        "for j in destinos:\n",
+        "    modelo += pulp.lpSum([x[i][j] for i in origenes]) == demanda[j], f\"Demanda_{j}\"\n",
+        "\n",
+        "# 10. Resolver el modelo\n",
+        "modelo.solve()\n",
+        "\n",
+        "# 11. Impresión de Resultados\n",
+        "print(\"=\"*40)\n",
+        "print(f\"Estado de la Solución: {pulp.LpStatus[modelo.status]}\")\n",
+        "print(\"=\"*40)\n",
+        "\n",
+        "print(\"\\n PLAN DE ENVÍOS ÓPTIMO:\")\n",
+        "for i in origenes:\n",
+        "    for j in destinos:\n",
+        "        if x[i][j].varValue > 0:\n",
+        "            print(f\"Desde {i} hacia {j}: {int(x[i][j].varValue)} automóviles\")\n",
+        "\n",
+        "print(\"-\" * 40)\n",
+        "print(f\" COSTO TOTAL MÍNIMO Z: ${int(pulp.value(modelo.objective))}\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Q4GTU5U5U5lg",
+        "outputId": "9de541e4-aa08-46b3-e222-3e5cf597cec8"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "========================================\n",
+            "Estado de la Solución: Optimal\n",
+            "========================================\n",
+            "\n",
+            " PLAN DE ENVÍOS ÓPTIMO:\n",
+            "Desde Los_Angeles hacia Denver: 1000 automóviles\n",
+            "Desde Detroit hacia Denver: 1300 automóviles\n",
+            "Desde Detroit hacia Miami: 200 automóviles\n",
+            "Desde Nueva_Orleans hacia Miami: 1200 automóviles\n",
+            "----------------------------------------\n",
+            " COSTO TOTAL MÍNIMO Z: $313200\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "ANÁLISIS:\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "37HrQrZ8o5eh"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**EJERCICIOS**\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Ejercicio 1: Distribución Nacional de Passiflora maliformis L. (Cholupa)\n",
+        "\n",
+        "**EJERCICIO:**\n",
+        "Cinco fincas productoras ubicadas en Rivera y municipios aledaños deben despachar cargamentos semanales de cholupa hacia cinco mercados y plantas procesadoras.\n",
+        "\n",
+        "**Datos del Sistema:**\n",
+        "*   **Oferta (Toneladas):** Finca Rivera 1 (450), Finca Rivera 2 (380), Finca Santa María (250), Finca Neiva Sur (500), Finca Garzón (320). **Total Oferta = 1900 Ton.**\n",
+        "*        **Demanda (Toneladas):** Bogotá (500), Medellín (450), Cali (350), Barranquilla (300), Bucaramanga (200).**Total Demanda = 1800 Ton.**\n",
+        "\n",
+        "*   *Nota Analítica:* El sistema está **desbalanceado** (Oferta > Demanda). Hay un exceso de 100 toneladas, lo que en el algoritmo manual requiere un destino ficticio, y en PuLP se maneja   ajustando la restricción de oferta a una desigualdad ($\\le$).\n",
+        "\n",
+        "| Origen / Destino | Bogotá | Medellín | Cali | Barranquilla | Bucaramanga |\n",
+        "| :--- | :---: | :---: | :---: | :---: | :---: |\n",
+        "| **Finca Rivera 1** | \\$120 | \\$150 | \\$110 | \\$210 | \\$180 |\n",
+        "| **Finca Rivera 2** | \\$115 | \\$145 | \\$105 | \\$200 | \\$175 |\n",
+        "| **Finca Santa María** | \\$130 | \\$160 | \\$120 | \\$220 | \\$190 |\n",
+        "| **Finca Neiva Sur** | \\$100 | \\$140 | \\$130 | \\$195 | \\$170 |\n",
+        "| **Finca Garzón** | \\$140 | \\$170 | \\$115 | \\$230 | \\$195 |"
+      ],
+      "metadata": {
+        "id": "Jxry7L-XVvOv"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "---\n",
+        "## Ejercicio 2: Dotación de Kits de Robótica Educativa (ArcoSTEM)\n",
+        "\n",
+        "**Contexto:**\n",
+        "El grupo de investigación ArcoSTEM requiere distribuir kits de componentes electrónicos (placas Arduino, sensores, motores) adquiridos a seis proveedores nacionales hacia cuatro sedes institucionales, incluyendo la I.E. Santa Juana de Arco.\n",
+        "\n",
+        "**Datos del Sistema:**\n",
+        "*   **Oferta (Lotes):** Tecnologías Bogotá (120), Electrónica Cali (150), Innovación Medellín (110), Importadora Pereira (90), Arduino Barranquilla (80), Robótica Bucaramanga (100). **Total Oferta = 650.**\n",
+        "*   **Demanda (Lotes):** I.E. Santa Juana de Arco (180), I.E. Neiva Centro (150), Sede Técnica Pitalito (140), Sede Rural Sur (180). **Total Demanda = 650.**\n",
+        "*   *Nota Analítica:* El sistema está **balanceado** (Oferta = Demanda).\n",
+        "\n",
+        "| Proveedor / Sede | Santa Juana de Arco | Neiva Centro | Técnica Pitalito | Rural Sur |\n",
+        "| :--- | :---: | :---: | :---: | :---: |\n",
+        "| **Tecnologías Bogotá** | $35 | $30 | $45 | $40 |\n",
+        "| **Electrónica Cali** | $45 | $40 | $35 | $50 |\n",
+        "| **Innovación Medellín** | $50 | $45 | $55 | $60 |\n",
+        "| **Importadora Pereira** | $40 | $35 | $45 | $55 |\n",
+        "| **Arduino Barranquilla** | $70 | $65 | $80 | $75 |\n",
+        "| **Robótica Bucaramanga**| $60 | $55 | $70 | $65 |"
+      ],
+      "metadata": {
+        "id": "nopD6J47V5o7"
+      }
+    }
+  ]
+}
